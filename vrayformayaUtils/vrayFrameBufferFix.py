@@ -6,7 +6,7 @@ def vrayFrameBufferFix():
     """ Fixes missing V-ray FrameBuffer
 
         It happens from time to time that the V-ray frame buffer just disappears and won't pop up.
-        If that happens it's probably the good old V-ray for Maya framebuffer bug striking again.
+        In the scenario it's probably the good old V-ray for Maya framebuffer bug striking again.
         When that happens this script will come to the rescue.
 
         It will save your file as a temporary .ma file, removes the buggy ASCII code of the
@@ -14,7 +14,7 @@ def vrayFrameBufferFix():
 
         Note: It doesn't automatically save it over your original file even though it might
               look like it because it shows the original filename at the top.
-              Save your scene when it works. :)
+              Save your scene when it worked. :)
     """
     current_dir = os.path.dirname(mc.file(query=True, sceneName=True))
     current_name, current_ext = os.path.splitext(mc.file(query=True, sceneName=True))
