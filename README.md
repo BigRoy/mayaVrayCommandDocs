@@ -12,7 +12,7 @@ First focusing on all the built-in commands that come with a V-ray for Maya inst
 
 ###Example Code
 
-I'll add some example functions in the repository over time.
+I'll add some more example functions in the repository over time.
 
 With this we hope to share some of the knowledge that we've gained from using V-ray over time and the increasing need we had to improve the efficiency of our workflow. 
 
