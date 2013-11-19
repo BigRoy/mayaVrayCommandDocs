@@ -1,11 +1,11 @@
-mayaVrayCommandDocs for DUMMIES (Quick Start)
-=============================================
+mayaVrayCommandDocs for DUMMIES
+===============================
 
 If you don't have a Technical Director in the studio or you're just looking for some quick and dirty scripts to help
 you out in your V-ray for Maya workflow this is where you start. Welcome!
 
 
-###Snippets
+###Snippets (Quick Start)
 
 Most likely the code snippets are the most interesting thing here if you're looking to get started quickly.
 You can find them in the repository in the snippets directory. These are small scripts that don't require
