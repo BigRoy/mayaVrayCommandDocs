@@ -36,4 +36,5 @@ Getting to a higher level of automatisation is closely related to understanding 
 ###This is a personal project
 
 Note that this is a personal/community project so we can't deliver 24-hour support, but whenever you have some questions feel free to contact me at roy@colorbleed.nl
-Otherwise, if it's really V-ray related (and not to the code provided here) make sure to contact Chaosgroup support.
+
+And if it's really V-ray related (and not to the code provided here) make sure to contact Chaosgroup support.
