@@ -11,11 +11,13 @@ Most likely the code snippets are the most interesting thing here if you're look
 You can find them in the repository in the snippets directory. These are small scripts that don't require
 any of the dependencies other than a standard Maya installation with V-ray for Maya installed.
 
+[vray snippets](snippets)
+
 In short, you could even copy the raw code of one of the snippets and paste it into the Maya script editor.
-Note that all scripts here are written in _Python_, so make sure to run it in a Python tab.
+Note that all scripts here are written in **Python**, so make sure to run it in a Python tab.
 
 
-#####Script to shelve.
+####Get the scripts into your shelve.
 
 You can middle-mouse drag the script from your script editor onto your Maya shelf to create an icon for it. You can
 easily label, annotate and customize it by clicking on the small triangle on the shelf at the left of the screen, click
