@@ -24,16 +24,7 @@ easily label, annotate and customize it by clicking on the small triangle on the
 _Shelf Editor..._
 
 
-###Example Code
-
-I'll add some more example functions in the repository over time.
-
-With this we hope to share some of the knowledge that we've gained from using V-ray over time and the increasing need we had to improve the efficiency of our workflow. 
-
-Getting to a higher level of automatisation is closely related to understanding how to script your way through the basics. We are trying to help out on that part by sharing small code snippets focused on getting tasks done. By making this open-source we also hope to learn a lot from others and their ideas on the V-ray for Maya workflow.
-
-
-###This is a personal project
+###This is a community project
 
 Note that this is a personal/community project so we can't deliver 24-hour support, but whenever you have some questions feel free to contact me at roy@colorbleed.nl
 
