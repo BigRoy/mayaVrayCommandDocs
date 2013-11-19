@@ -20,3 +20,7 @@ def addVraySubdivisionAttribute(shapes=None):
             mc.vray("addAttributesFromGroup", shape, "vray_subdivision", 1)
     else:
         raise RuntimeError("No shapes found to apply the vray_subdivision attribute group to.")
+
+
+if __name__ == "__main__":
+    addVraySubdivisionAttribute()

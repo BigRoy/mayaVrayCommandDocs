@@ -19,6 +19,25 @@ With this we hope to share some of the knowledge that we've gained from using V-
 Getting to a higher level of automatisation is closely related to understanding how to script your way through the basics. We are trying to help out on that part by sharing small code snippets focused on getting tasks done. By making this open-source we also hope to learn a lot from others and their ideas on the V-ray for Maya workflow.
 
 
+###vrayForMayaUtils vs snippets
+
+The `vrayForMayaUtils` package will contain functionality that allows TD's/Programmers to interact with V-ray in an
+easier way. Currently this is just a dummy folder. Though we're working on building a _consistent framework_.
+
+A couple of focuses here are:
+
+- Autocomplete for functions
+
+- Consistent framework
+
+- Possibly object oriented where suitable
+
+On the other hand there are the `snippets`. You could consider that the quick stop for finding your script to deal with
+a certain repetitive tasks. This is where you should go if you want to get started quickly.
+
+Also read the README_FOR_DUMMIES.md for more information.
+
+
 ###Help the Vray for Maya community
 
 If you have any good documentation, tips or code snippets for Vray for Maya feel free to fork the repository and start adding away.

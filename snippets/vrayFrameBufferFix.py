@@ -70,3 +70,7 @@ def vrayFrameBufferFix():
 
         os.remove(path_fix_save)
         print "Fixed!"
+
+
+if __name__ == "__main__":
+    vrayFrameBufferFix()
