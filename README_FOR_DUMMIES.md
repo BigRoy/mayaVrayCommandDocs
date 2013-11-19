@@ -33,7 +33,7 @@ With this we hope to share some of the knowledge that we've gained from using V-
 Getting to a higher level of automatisation is closely related to understanding how to script your way through the basics. We are trying to help out on that part by sharing small code snippets focused on getting tasks done. By making this open-source we also hope to learn a lot from others and their ideas on the V-ray for Maya workflow.
 
 
-###Help the Vray for Maya community
+###This is a personal project
 
-If you have any good documentation, tips or code snippets for Vray for Maya feel free to fork the repository and start adding away.
-
+Note that this is a personal/community project so we can't deliver 24-hour support, but whenever you have some questions feel free to contact me at roy@colorbleed.nl
+Otherwise, if it's really V-ray related (and not to the code provided here) make sure to contact Chaosgroup support.
