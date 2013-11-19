@@ -9,11 +9,11 @@ you out in your V-ray for Maya workflow this is where you start. Welcome!
 
 Most likely the code snippets are the most interesting thing here if you're looking to get started quickly.
 You can find them in the repository in the snippets directory. These are small scripts that don't require
-any of the dependencies other than a standard Maya installation with V-ray for Maya installed.
+any of the dependencies other than a standard Maya installation with V-ray for Maya.
 
 ####[V-ray for Maya code Snippets](snippets)
 
-In short, you could even copy the raw code of one of the snippets and paste it into the Maya script editor.
+In short, you could copy the raw code of one of the snippets and paste it into the Maya script editor.
 Note that all scripts here are written in **Python**, so make sure to run it in a Python tab.
 
 
