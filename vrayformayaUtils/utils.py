@@ -11,7 +11,7 @@ def getMaterials(nodes=None):
     """
     # Get selected nodes if None provided
     if nodes is None:
-        nodes = mc.ls(sl=1, mat=1)
+        nodes = mc.ls(sl=1)
 
     # Get materials from list
     materials = mc.ls(nodes, mat=1)
@@ -77,10 +77,14 @@ def getShapes(nodes=None,
                                        fullPath=True,
                                        allDescendents=allDescendents))
 
+    # Return nothing if we have nothing
+    if not shapes:
+        return []
+
     # Filter to a certain type (and change to non-long/non-fullPath version if the user requests that).
-    if filterType and nodes:
+    elif filterType is not None:
         # Only apply to mesh or nurbsSurface (other shapes can't contain the vray_subdivision attribute)
-        shapes = mc.ls(nodes, type=filterType, long=fullPath)
+        shapes = mc.ls(shapes, type=filterType, long=fullPath)
 
     # Change to non-long/non-fullPath version if the user requests that.
     elif not fullPath:
