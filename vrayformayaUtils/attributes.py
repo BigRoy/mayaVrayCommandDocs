@@ -17,12 +17,27 @@
 
     ### Smart Convert input
 
-    Many (if not all) attributes come with a smartConvert parameter that is True by default.
+    Many (if not all) attribute functions come with a smartConvert parameter that is True by default.
     It allows the input list to be interpreted as 'get related objects that can have this attribute'.
     This means you can actually apply a `vray_material_id` to a mesh.
     It will get the related assigned material and applies it to that. Easy right?
 
     If you don't want this automatic conversion doing anything you can set the smartConvert parameter to False.
+
+        - ##### allowTransform parameter
+
+            Some functions might have an allowTransform parameter. This is used for functions that can be applied to
+            both shapes as well as transforms. Setting this parameter to True will interpret transform nodes as actual
+            nodes to add the attributes to (instead of trying to do a smartConvert). Note that setting allowTransform
+            to True actually forces smartConvert to False.
+
+        - ##### allDescendents parameter
+
+            Attribute functions that are applied to shapes can have an allDescendents parameter. This allows the input
+            list to be converted to children and it's children children. This allows a group to be used as input and all
+            of it's children shapes in the hierarchy will get the attribute. Note that this is (in the relevant cases)
+            True by default. So if you only want to apply to direct children of a transform when using smartConvert
+            make sure you set allDescendents to False.
 
 
     ### Filters to valid objects
@@ -1274,6 +1289,7 @@ def vray_arealight(shapes=None,
             if vrayMBSamples is not None:
                 mc.setAttr("{0}.vrayOverrideMBSamples".format(shape), vrayMBSamples)
 
+
 ##############
 ## file
 ##############
@@ -1290,12 +1306,119 @@ def vray_arealight(shapes=None,
 ###################
 ## place2dTexture
 ###################
-#TODO: Add: 2D Placement Options (vray_2d_placement_options)
+
+def vray_2d_placement_options(nodes=None,
+                     state=1,
+                     smartConvert=True,
+                     vrayUVSetName=None):
+    """ Add/change the 2D Placement Options (vray_2d_placement_options) attribute to input place2dTexture nodes.
+
+    Valid node types: (place2dTexture)
+
+    :param nodes: nodes to apply the attribute to. If nodes is None it will get
+                  the nodes related to the current selection.
+
+    :param smartConvert: CURRENTLY NO IMPLEMENTATION
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param vrayUVSetName: Set the UV set name attribute string value. If None it remains default/unchanged.
+    :type  vrayUVSetName: None or str
+    """
+
+    state = _convert_state(state)
+    validTypes = ("place2dTexture")
+
+    if nodes is None:
+        nodes = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # TODO: Implement smart convert
+        pass
+
+    nodes = mc.ls(nodes, type=validTypes, long=True)
+
+    if not nodes:
+        raise RuntimeError("No place2dTexture found to apply the vray_2d_placement_options attribute changes to.")
+
+    for node in nodes:
+        mc.vray("addAttributesFromGroup", node, "vray_2d_placement_options", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayUVSetName is not None:
+                mc.setAttr("{0}.vrayUVSetName".format(node), vrayUVSetName, type="string")
+
 
 ###################
 ## samplerInfo
 ###################
-#TODO: Add: Additional outputs (vray_samplerinfo_extra_tex)
+
+def vray_samplerinfo_extra_tex(nodes=None,
+                     state=1,
+                     smartConvert=True,
+                     vrayNormalObj=None,
+                     vrayNormalWorld=None,
+                     vrayGNormalWorld=None,
+                     vrayPointWorldReferenceX=None,
+                     vrayNormalWorldReferenceX=None,
+                     vrayRayDepth=None,
+                     vrayPathLength=None):
+    """ Add/change the Additional outputs (vray_samplerinfo_extra_tex) attribute to input samplerInfo nodes.
+
+    Note that in general setting the attribute values for a samplerInfo node isn't really doing anything useful.
+    I've implemented the v-ray attribute parameters anyway, but they should be pretty much useless in this case.
+
+    Valid node types: (samplerInfo)
+
+    :param nodes: nodes to apply the attribute to. If nodes is None it will get
+                  the nodes related to the current selection.
+
+    :param smartConvert: CURRENTLY NO IMPLEMENTATION
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+    """
+    # TODO: Implement attribute parameters description
+
+    state = _convert_state(state)
+    validTypes = ("samplerInfo")
+
+    if nodes is None:
+        nodes = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # TODO: Implement smart convert
+        pass
+
+    nodes = mc.ls(nodes, type=validTypes, long=True)
+
+    if not nodes:
+        raise RuntimeError("No samplerInfo found to apply the vray_samplerinfo_extra_tex attribute changes to.")
+
+    for node in nodes:
+        mc.vray("addAttributesFromGroup", node, "vray_samplerinfo_extra_tex", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayNormalObj is not None:
+                mc.setAttr("{0}.vrayNormalObj".format(node), vrayNormalObj)
+            if vrayNormalWorld is not None:
+                mc.setAttr("{0}.vrayNormalWorld".format(node), vrayNormalWorld)
+            if vrayGNormalWorld is not None:
+                mc.setAttr("{0}.vrayGNormalWorld".format(node), vrayGNormalWorld)
+            if vrayPointWorldReferenceX is not None:
+                mc.setAttr("{0}.vrayPointWorldReferenceX".format(node), vrayPointWorldReferenceX)
+            if vrayNormalWorldReferenceX is not None:
+                mc.setAttr("{0}.vrayNormalWorldReferenceX".format(node), vrayNormalWorldReferenceX)
+            if vrayRayDepth is not None:
+                mc.setAttr("{0}.vrayRayDepth".format(node), vrayRayDepth)
+            if vrayPathLength is not None:
+                mc.setAttr("{0}.vrayPathLength".format(node), vrayPathLength)
+
 
 ###################
 ## transform
