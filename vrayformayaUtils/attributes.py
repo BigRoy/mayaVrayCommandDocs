@@ -56,6 +56,34 @@ def _convert_state(state):
     return state
 
 
+def _convert_input_shapes(shapes=None, smartConvert=True, allDescendents=True, filterType=None, allowTransform=False):
+    """
+        Converts a input list for shapes (and possibly transforms) to allow for simple smartConvert implementation.
+    """
+    # If we allow transforms we will NOT Smart Convert to related shapes.
+    # Instead we will get transforms + shapes directly from input list or selection
+    if allowTransform:
+        smartConvert = False
+
+        # Convert string filterType to tuple so we can add the transform to it. :)
+        if isinstance(filterType, basestring):
+            filterType = (filterType,)
+
+        filterType = filterType + ("transform",)
+
+    # If None provided as input list use selection
+    if shapes is None:
+        shapes = mc.ls(sl=1, long=True)
+
+    # Convert to related shapes if smartConvert else get directly from input shapes.
+    if smartConvert:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=filterType)
+    else:
+        shapes = mc.ls(shapes, filterType, long=True)
+
+    return shapes
+
+
 #####################
 # mesh, nurbsSurface
 #####################
@@ -101,27 +129,14 @@ def vray_object_id(shapes=None,
     :type  vrayObjectID: None or int
     """
     state = _convert_state(state)
+
     validTypes = ("mesh",
                   "nurbsSurface",
                   "VRayLightDomeShape",
                   "VRayLightRectShape",
                   "VRayLightSphereShape")
-
-    # If we allow transforms we will NOT Smart Convert to related shapes.
-    # Instead we will get transforms + shapes directly from input list or selection
-    if allowTransform:
-        smartConvert = False
-        validTypes = validTypes + ("transform",)
-
-    # If None provided as input list use selection
-    if shapes is None:
-        shapes = mc.ls(sl=1)
-
-    # Convert to related shapes if smartConvert else get directly from input shapes.
-    if smartConvert:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes, allowTransform=False)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
@@ -170,23 +185,10 @@ def vray_user_attributes(shapes=None,
     """
 
     state = _convert_state(state)
+
     validTypes = ("mesh", "nurbsSurface")
-
-    # If we allow transforms we will NOT Smart Convert to related shapes.
-    # Instead we will get transforms + shapes directly from input list or selection
-    if allowTransform:
-        smartConvert = False
-        validTypes = validTypes + ("transform",)
-
-    # If None provided as input list use selection
-    if shapes is None:
-        shapes = mc.ls(sl=1)
-
-    # Convert to related shapes if smartConvert else get directly from input shapes.
-    if smartConvert:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes, allowTransform=False)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_user_attributes attribute group changes to.")
@@ -233,9 +235,12 @@ def vray_subdivision(shapes=None,
     :param vraySubdivUVs: Enable/disable the smoothing of the UVs. If None it remains default/unchanged.
     :type  vraySubdivUVs: None or bool
 
-    :param vrayPreserveMapBorders: Enable/disable the UV borders if smoothing UVs is on.
-                                   If None it remains default/unchanged.
-    :type  vrayPreserveMapBorders: None or bool
+    :param vrayPreserveMapBorders: Set the method of preserve map borders.
+                                   Enum attribute:
+                                       0. None,
+                                       1. Internal,
+                                       2. All
+    :type  vrayPreserveMapBorders: None or int (0-2)
 
     :param vrayStaticSubdiv: Enable/disable vrayStaticSubdiv. If None it remains default/unchanged.
     :type  vrayStaticSubdiv: None or bool
@@ -245,12 +250,10 @@ def vray_subdivision(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("mesh")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No meshes found to apply the vray_subdivision attribute group changes to.")
@@ -308,12 +311,10 @@ def vray_subquality(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("mesh")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No meshes found to apply the vray_subquality attribute group changes to.")
@@ -427,12 +428,10 @@ def vray_displacement(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("mesh")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No meshes found to apply the vray_displacement attribute group changes to.")
@@ -504,12 +503,10 @@ def vray_roundedges(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("mesh")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No meshes found to apply the vray_roundedges attribute group changes to.")
@@ -549,12 +546,10 @@ def vray_fogFadeOut(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("mesh")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No meshes found to apply the vray_fogFadeOut attribute group changes to.")
@@ -598,12 +593,10 @@ def vray_phoenix_object(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("mesh")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No meshes found to apply the vray_phoenix_object attribute group changes to.")
@@ -656,12 +649,10 @@ def vray_nurbsStaticGeom(shapes=None,
     """
 
     state = _convert_state(state)
-    validTypes = "nurbsSurface"
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    validTypes = ("nurbsSurface")
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
@@ -713,10 +704,8 @@ def vray_nurbscurve_renderable(shapes=None,
     state = _convert_state(state)
     validTypes = ("nurbsCurve")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
@@ -770,7 +759,10 @@ def vray_material_id(materials=None,
     """
     state = _convert_state(state)
 
-    if smartConvert or materials is None:
+    if materials is None:
+        materials = mc.ls(sl=1)
+
+    if smartConvert:
         materials = getMaterials(materials)
     else:
         materials = mc.ls(materials, mat=True)
@@ -807,7 +799,10 @@ def vray_specific_mtl(materials=None,
     # TODO: Add change attribute value support
     state = _convert_state(state)
 
-    if smartConvert or materials is None:
+    if materials is None:
+        materials = mc.ls(sl=1)
+
+    if smartConvert:
         materials = getMaterials(materials)
     else:
         materials = mc.ls(materials, mat=True)
@@ -848,7 +843,10 @@ def vray_closed_volume(materials=None,
 
     state = _convert_state(state)
 
-    if smartConvert or materials is None:
+    if materials is None:
+        materials = mc.ls(sl=1)
+
+    if smartConvert:
         materials = getMaterials(materials)
     else:
         materials = mc.ls(materials, mat=True)
@@ -892,10 +890,8 @@ def vray_cameraPhysical(shapes=None,
     state = _convert_state(state)
     validTypes = ("camera")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No cameras found to apply the vray_cameraPhysical attribute group changes to.")
@@ -934,10 +930,8 @@ def vray_cameraOverrides(shapes=None,
     state = _convert_state(state)
     validTypes = ("camera")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No cameras found to apply the vray_cameraOverrides attribute group changes to.")
@@ -991,10 +985,8 @@ def vray_cameraDome(shapes=None,
     state = _convert_state(state)
     validTypes = ("camera")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No cameras found to apply the vray_cameraDome attribute group changes to.")
@@ -1053,10 +1045,8 @@ def vray_light(shapes=None,
     state = _convert_state(state)
     validTypes = ("ambientLight")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_light attribute group changes to.")
@@ -1116,10 +1106,8 @@ def vray_directlight(shapes=None,
     state = _convert_state(state)
     validTypes = ("directionalLight")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_pointLight attribute group changes to.")
@@ -1184,10 +1172,8 @@ def vray_pointLight(shapes=None,
     state = _convert_state(state)
     validTypes = ("spotLight", "pointLight")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_pointLight attribute group changes to.")
@@ -1254,10 +1240,8 @@ def vray_arealight(shapes=None,
     state = _convert_state(state)
     validTypes = ("areaLight")
 
-    if smartConvert or shapes is None:
-        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
-    else:
-        shapes = mc.ls(shapes, type=validTypes)
+    shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
+                                   filterType=validTypes)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_arealight attribute group changes to.")
