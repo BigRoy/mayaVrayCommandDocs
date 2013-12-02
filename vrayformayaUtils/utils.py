@@ -14,7 +14,7 @@ def getMaterials(nodes=None):
         nodes = mc.ls(sl=1)
 
     # Get materials from list
-    materials = mc.ls(nodes, mat=1)
+    materials = mc.ls(nodes, mat=1, long=True)
 
     # Get materials related to nodes (material from object)
     # And add those materials to the material list we already have
@@ -23,8 +23,9 @@ def getMaterials(nodes=None):
         if nodes_history:
             nodes_connections = mc.listConnections(nodes_history)
             if nodes_connections:
-                connected_materials = mc.ls(nodes_connections, mat=True)
+                connected_materials = mc.ls(nodes_connections, mat=True, long=True)
                 if connected_materials:
+                    # Use a set so we don't have any duplicates
                     materials = set(materials)
                     materials.update(connected_materials)
                     materials = list(materials)
@@ -64,18 +65,26 @@ def getShapes(nodes=None,
         else:
             sel = mc.ls(sl=1)
             shapes = mc.ls(sl=1, s=1, long=True)
-            shapes.extend(mc.listRelatives(sel,
-                                           children=True,
-                                           shapes=True,
-                                           fullPath=True))
-    # Acquire from input nodes
-    else:
-        shapes = mc.ls(nodes, s=1, long=True)
-        shapes.extend(mc.listRelatives(nodes,
+
+            childrenShapes = mc.listRelatives(sel,
                                        children=True,
                                        shapes=True,
                                        fullPath=True,
-                                       allDescendents=allDescendents))
+                                       allDescendents=allDescendents)
+            if childrenShapes:
+                shapes.extend(childrenShapes)
+
+    # Acquire from input nodes
+    else:
+        shapes = mc.ls(nodes, s=1, long=True)
+
+        childrenShapes = mc.listRelatives(nodes,
+                                       children=True,
+                                       shapes=True,
+                                       fullPath=True,
+                                       allDescendents=allDescendents)
+        if childrenShapes:
+            shapes.extend(childrenShapes)
 
     # Return nothing if we have nothing
     if not shapes:

@@ -44,7 +44,9 @@ def _convert_state(state):
     For module internal use.
 
     :param state: The state to be converted to 1 or 0
+
     :return: Converted state
+    :rtype: int
     """
     if not isinstance(state, int) or isinstance(state, bool):
         try:
@@ -54,10 +56,153 @@ def _convert_state(state):
     return state
 
 
-##########
+#####################
 # mesh, nurbsSurface
+#####################
+
+def vray_object_id(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     allowTransform=False,
+                     vrayObjectID=None):
+    """ Add/change the vray_object_id attribute to selected meshes
+
+    Valid node types: (mesh, nurbsSurface, VRayLightDomeShape, VRayLightRectShape, VRayLightSphereShape, transform)
+
+    The v-ray object ID can be applied to transform nodes as well, that means the transform of a mesh or even a parent
+    group. Though the lowest in hierarchy will always override the others, i.e.:
+
+        - Group (=Transform)    (3rd)
+            - Transform         (2nd)
+                - Shape         (1st)
+
+    By default this function excludes transforms and will force it to actual shapes. If you want to apply to transform
+    nodes set the allowTransform parameter to True. Note that this will force smartConvert to False.
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param smartConvert: If True it will convert the input smartly to related shape nodes.
+    :type  smartConvert: bool
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+
+    :param allowTransform: If True it will interpret transform nodes as actual valid objects.
+                           This means it will NOT smartConvert, so when True this will override smartConvert to False.
+    :type  allowTransform: bool
+
+    :param vrayObjectID: The object ID number value. If None remains default/unchanged.
+    :type  vrayObjectID: None or int
+    """
+    state = _convert_state(state)
+    validTypes = ("mesh",
+                  "nurbsSurface",
+                  "VRayLightDomeShape",
+                  "VRayLightRectShape",
+                  "VRayLightSphereShape")
+
+    # If we allow transforms we will NOT Smart Convert to related shapes.
+    # Instead we will get transforms + shapes directly from input list or selection
+    if allowTransform:
+        smartConvert = False
+        validTypes = validTypes + ("transform",)
+
+    # If None provided as input list use selection
+    if shapes is None:
+        shapes = mc.ls(sl=1)
+
+    # Convert to related shapes if smartConvert else get directly from input shapes.
+    if smartConvert:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_objectID", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayObjectID is not None:
+                mc.setAttr("{0}.vrayObjectID".format(shape), vrayObjectID)
+
+
+def vray_user_attributes(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     allowTransform=False,
+                     vrayUserAttributes=None):
+    """ Add/change the User Attributes (vray_user_attributes) attribute to input shapes/transforms.
+
+    Valid node types: (mesh, nurbsSurface, transform)
+
+    By default this function excludes transforms and will force it to actual shapes. If you want to apply to transform
+    nodes set the allowTransform parameter to True. Note that this will force smartConvert to False.
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param smartConvert: If True it will convert the input smartly to related shape nodes.
+    :type  smartConvert: bool
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+
+    :param allowTransform: If True it will interpret transform nodes as actual valid objects.
+                           This means it will NOT smartConvert, so when True this will override smartConvert to False.
+    :type  allowTransform: bool
+
+    :param vrayUserAttributes: The actual user attribute string value. If None it remains default/unchanged.
+    :type  vrayUserAttributes: None or str
+    """
+
+    state = _convert_state(state)
+    validTypes = ("mesh", "nurbsSurface")
+
+    # If we allow transforms we will NOT Smart Convert to related shapes.
+    # Instead we will get transforms + shapes directly from input list or selection
+    if allowTransform:
+        smartConvert = False
+        validTypes = validTypes + ("transform",)
+
+    # If None provided as input list use selection
+    if shapes is None:
+        shapes = mc.ls(sl=1)
+
+    # Convert to related shapes if smartConvert else get directly from input shapes.
+    if smartConvert:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No shapes found to apply the vray_user_attributes attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_user_attributes", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayUserAttributes is not None:
+                mc.setAttr("{0}.vrayUserAttributes".format(shape), vrayUserAttributes, type="string")
+
+
 ##########
-# TODO: Add vray_subquality, vray_displacement, vray_roundedges, vray_fogFadeOut
+# mesh
+##########
 
 def vray_subdivision(shapes=None,
                      state=1,
@@ -68,14 +213,14 @@ def vray_subdivision(shapes=None,
                      vrayPreserveMapBorders=None,
                      vrayStaticSubdiv=None,
                      vrayClassicalCatmark=None):
-    """ Add/change the subdivision attribute to selected meshes
+    """ Add/change the Subdivision (vray_subdivision) attribute to input meshes.
 
-    Valid node types: (mesh, nurbsSurface)
+    Valid node types: (mesh)
 
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -98,10 +243,9 @@ def vray_subdivision(shapes=None,
     :param vrayClassicalCatmark: Enable/disable vrayClassicalCatmark. If None it remains default/unchanged.
     :type  vrayClassicalCatmark: None or bool
     """
-    # TODO: Add better explanation for what vrayStaticSubdiv and vrayClassicalCatmark is.
 
     state = _convert_state(state)
-    validTypes = ("mesh", "nurbsSurface")
+    validTypes = ("mesh")
 
     if smartConvert or shapes is None:
         shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
@@ -109,7 +253,7 @@ def vray_subdivision(shapes=None,
         shapes = mc.ls(shapes, validTypes)
 
     if not shapes:
-        raise RuntimeError("No shapes found to apply the vray_subdivision attribute group changes to.")
+        raise RuntimeError("No meshes found to apply the vray_subdivision attribute group changes to.")
 
     for shape in shapes:
         mc.vray("addAttributesFromGroup", shape, "vray_subdivision", state)
@@ -128,34 +272,43 @@ def vray_subdivision(shapes=None,
                 mc.setAttr("{0}.vrayClassicalCatmark".format(shape), vrayClassicalCatmark)
 
 
-def vray_object_id(shapes=None,
+def vray_subquality(shapes=None,
                      state=1,
                      smartConvert=True,
                      allDescendents=True,
-                     vrayObjectID=None):
-    """ Add/change the vray_object_id attribute to selected meshes
+                     vrayOverrideGlobalSubQual=None,
+                     vrayViewDep=None,
+                     vrayEdgeLength=None,
+                     vrayMaxSubdivs=None):
+    """ Add/change the Subdivision and Displacement Quality (vray_subquality) attribute to input meshes
+
+    Valid node types: (mesh)
 
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the vray_object_id attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
-
-    :param smartConvert: If True it will convert the input smartly to related shape nodes.
-    :type  smartConvert: bool
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
                            e.g. this allows you to apply it to a group and all shapes in it will get object ids.
     :type  allDescendents: bool
 
-    :param vrayObjectID: The object ID number value. If None remains default/unchanged.
-    :type  vrayObjectID: None or int
+    :param vrayOverrideGlobalSubQual: Enable/disable override global settings. If None it remains default/unchanged.
+    :type  vrayOverrideGlobalSubQual: None or bool
+
+    :param vrayViewDep: Enable/disable view dependent. If None it remains default/unchanged.
+    :type  vrayViewDep: None or bool
+
+    :param vrayEdgeLength: Set the edge length. If None it remains default/unchanged.
+    :type  vrayEdgeLength: None or float
+
+    :param vrayMaxSubdivs: Set the maximum subdivisions. If None it remains default/unchanged.
+    :type  vrayMaxSubdivs: None or int
     """
-    # TODO: Somehow also supported by VRayLightDomeShape, VRayLightRectShape, VRayLightSphereShape so add support?
-    # TODO: ^- First check if it does anything useful (if it's not doing anything report bug to Chaosgroup)
 
     state = _convert_state(state)
-    validTypes = ("mesh", "nurbsSurface")
+    validTypes = ("mesh")
 
     if smartConvert or shapes is None:
         shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
@@ -163,43 +316,118 @@ def vray_object_id(shapes=None,
         shapes = mc.ls(shapes, validTypes)
 
     if not shapes:
-        raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
+        raise RuntimeError("No meshes found to apply the vray_subquality attribute group changes to.")
 
     for shape in shapes:
-        mc.vray("addAttributesFromGroup", shape, "vray_objectID", state)
+        mc.vray("addAttributesFromGroup", shape, "vray_subquality", state)
 
         # Manage the attributes (if not None change it to the set value)
         if state:
-            if vrayObjectID is not None:
-                mc.setAttr("{0}.vrayObjectID".format(shape), vrayObjectID)
+            if vrayOverrideGlobalSubQual is not None:
+                mc.setAttr("{0}.vrayOverrideGlobalSubQual".format(shape), vrayOverrideGlobalSubQual)
+            if vrayViewDep is not None:
+                mc.setAttr("{0}.vrayViewDep".format(shape), vrayViewDep)
+            if vrayEdgeLength is not None:
+                mc.setAttr("{0}.vrayEdgeLength".format(shape), vrayEdgeLength)
+            if vrayMaxSubdivs is not None:
+                mc.setAttr("{0}.vrayMaxSubdivs".format(shape), vrayMaxSubdivs)
 
 
-def vray_user_attributes(shapes=None,
+def vray_displacement(shapes=None,
                      state=1,
                      smartConvert=True,
                      allDescendents=True,
-                     vrayUserAttributes=None):
-    """ Add/change the vray_user_attributes attribute to input shapes.
+                     vrayDisplacementNone=None,
+                     vrayDisplacementStatic=None,
+                     vrayDisplacementType=None,
+                     vrayDisplacementAmount=None,
+                     vrayDisplacementShift=None,
+                     vrayDisplacementKeepContinuity=None,
+                     vrayEnableWaterLevel=None,
+                     vrayWaterLevel=None,
+                     vray2dDisplacementResolution=None,
+                     vray2dDisplacementPrecision=None,
+                     vray2dDisplacementTightBounds=None,
+                     vray2dDisplacementFilterTexture=None,
+                     vray2dDisplacementFilterBlur=None,
+                     vrayDisplacementUseBounds=None,
+                     vrayDisplacementMinValue=None,
+                     vrayDisplacementMaxValue=None):
+    """ Add/change the Displacement Control (vray_displacement) attribute to input meshes.
+
+    Valid node types: (mesh)
 
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the vray_object_id attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
-
-    :param smartConvert: If True it will convert the input smartly to related shape nodes.
-    :type  smartConvert: bool
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
                            e.g. this allows you to apply it to a group and all shapes in it will get object ids.
     :type  allDescendents: bool
 
-    :param vrayUserAttributes: The actual user attribute string value. If None it remains default/unchanged.
-    :type  vrayUserAttributes: str
+    :param vrayDisplacementNone: Enable/disable override global settings. If None it remains default/unchanged.
+    :type  vrayDisplacementNone: None or bool
+
+    :param vrayDisplacementStatic: Enable/disable view dependent. If None it remains default/unchanged.
+    :type  vrayDisplacementStatic: None or bool
+
+    :param vrayDisplacementType: Set the displacement type. If None it remains default/unchanged.
+                                 Enum attribute:
+                                    0. 2D Displacement,
+                                    1. Normal Displacement,
+                                    2. Vector Displacement,
+                                    3. Vector Displacement (absolute),
+                                    4. Vector Displacement (object)
+    :type  vrayDisplacementType: None or int (0-4)
+
+    :param vrayDisplacementAmount: Set the displacement amount. If None it remains default/unchanged.
+    :type  vrayDisplacementAmount: None or int
+
+    :param vrayDisplacementShift: Set the displacement shift. If None it remains default/unchanged.
+    :type  vrayDisplacementShift: None or int
+
+    :param vrayDisplacementKeepContinuity: Enable/disable keep continuity. If None it remains default/unchanged.
+    :type  vrayDisplacementKeepContinuity: None or bool
+
+    :param vrayEnableWaterLevel: Enable/disable water level. If None it remains default/unchanged.
+    :type  vrayEnableWaterLevel: None or bool
+
+    :param vrayWaterLevel: Set the water level. If None it remains default/unchanged.
+    :type  vrayWaterLevel: None or float
+
+    :param vray2dDisplacementResolution: Set the texture resolution. If None it remains default/unchanged.
+    :type  vray2dDisplacementResolution: None or int
+
+    :param vray2dDisplacementPrecision: Set the texture precision. If None it remains default/unchanged.
+    :type  vray2dDisplacementPrecision: None or int
+
+    :param vray2dDisplacementTightBounds: Enable/disable tight bounds. If None it remains default/unchanged.
+    :type  vray2dDisplacementTightBounds: None or bool
+
+    :param vray2dDisplacementFilterTexture: Enable/disable filter texture. If None it remains default/unchanged.
+    :type  vray2dDisplacementFilterTexture: None or bool
+
+    :param vray2dDisplacementFilterBlur: Set the filter blur amount. If None it remains default/unchanged.
+    :type  vray2dDisplacementFilterBlur: None or float
+
+    :param vrayDisplacementUseBounds: Set the displacement bounds. If None it remains default/unchanged.
+                                      Enum attribute:
+                                         0. Automatic,
+                                         1. Explicit
+    :type  vrayDisplacementUseBounds: None or int (0-1)
+
+    :param vrayDisplacementMinValue: Set the min value bounds. If None it remains default/unchanged.
+    :type  vrayDisplacementMinValue: None or double3
+
+    :param vrayDisplacementMaxValue: Set the min value bounds. If None it remains default/unchanged.
+    :type  vrayDisplacementMaxValue: None or double3
+
     """
 
     state = _convert_state(state)
-    validTypes = ("mesh", "nurbsSurface")
+    validTypes = ("mesh")
 
     if smartConvert or shapes is None:
         shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
@@ -207,16 +435,186 @@ def vray_user_attributes(shapes=None,
         shapes = mc.ls(shapes, validTypes)
 
     if not shapes:
-        raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
+        raise RuntimeError("No meshes found to apply the vray_displacement attribute group changes to.")
 
     for shape in shapes:
-        mc.vray("addAttributesFromGroup", shape, "vray_user_attributes", state)
+        mc.vray("addAttributesFromGroup", shape, "vray_displacement", state)
 
         # Manage the attributes (if not None change it to the set value)
         if state:
-            if vrayUserAttributes is not None:
-                mc.setAttr("{0}.vrayUserAttributes".format(shape), vrayUserAttributes, type="string")
 
+            if vrayDisplacementNone is not None:
+                mc.setAttr("{0}.vrayDisplacementNone".format(shape), vrayDisplacementNone)
+            if vrayDisplacementStatic is not None:
+                mc.setAttr("{0}.vrayDisplacementStatic".format(shape), vrayDisplacementStatic)
+            if vrayDisplacementType is not None:
+                mc.setAttr("{0}.vrayDisplacementType".format(shape), vrayDisplacementType)
+            if vrayDisplacementAmount is not None:
+                mc.setAttr("{0}.vrayDisplacementAmount".format(shape), vrayDisplacementAmount)
+            if vrayDisplacementShift is not None:
+                mc.setAttr("{0}.vrayDisplacementShift".format(shape), vrayDisplacementShift)
+            if vrayDisplacementKeepContinuity is not None:
+                mc.setAttr("{0}.vrayDisplacementKeepContinuity".format(shape), vrayDisplacementKeepContinuity)
+            if vrayEnableWaterLevel is not None:
+                mc.setAttr("{0}.vrayEnableWaterLevel".format(shape), vrayEnableWaterLevel)
+            if vrayWaterLevel is not None:
+                mc.setAttr("{0}.vrayWaterLevel".format(shape), vrayWaterLevel)
+            if vray2dDisplacementResolution is not None:
+                mc.setAttr("{0}.vray2dDisplacementResolution".format(shape), vray2dDisplacementResolution)
+            if vray2dDisplacementPrecision is not None:
+                mc.setAttr("{0}.vray2dDisplacementPrecision".format(shape), vray2dDisplacementPrecision)
+            if vray2dDisplacementTightBounds is not None:
+                mc.setAttr("{0}.vray2dDisplacementTightBounds".format(shape), vray2dDisplacementTightBounds)
+            if vray2dDisplacementFilterTexture is not None:
+                mc.setAttr("{0}.vray2dDisplacementFilterTexture".format(shape), vray2dDisplacementFilterTexture)
+            if vray2dDisplacementFilterBlur is not None:
+                mc.setAttr("{0}.vray2dDisplacementFilterBlur".format(shape), vray2dDisplacementFilterBlur)
+            if vrayDisplacementUseBounds is not None:
+                mc.setAttr("{0}.vrayDisplacementUseBounds".format(shape), vrayDisplacementUseBounds)
+            if vrayDisplacementMinValue is not None:
+                mc.setAttr("{0}.vrayDisplacementMinValue".format(shape), vrayDisplacementMinValue)
+            if vrayDisplacementMaxValue is not None:
+                mc.setAttr("{0}.vrayDisplacementMaxValue".format(shape), vrayDisplacementMaxValue)
+
+def vray_roundedges(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     vrayRoundEdges=None,
+                     vrayRoundEdgesRadius=None):
+    """ Add/change the Round Edges (vray_roundedges) attribute to input meshes.
+
+    Valid node types: (mesh)
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+
+    :param vrayRoundEdges: Enable/disable round edges. If None it remains default/unchanged.
+    :type  vrayRoundEdges: None or bool
+
+    :param vrayRoundEdgesRadius: Set the round edges radius. If None it remains default/unchanged.
+    :type  vrayRoundEdgesRadius: None or float
+    """
+
+    state = _convert_state(state)
+    validTypes = ("mesh")
+
+    if smartConvert or shapes is None:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No meshes found to apply the vray_roundedges attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_roundedges", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayRoundEdges is not None:
+                mc.setAttr("{0}.vrayRoundEdges".format(shape), vrayRoundEdges)
+            if vrayRoundEdgesRadius is not None:
+                mc.setAttr("{0}.vrayRoundEdgesRadius".format(shape), vrayRoundEdgesRadius)
+
+
+def vray_fogFadeOut(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     vrayFogFadeOut=None):
+    """ Add/change the Subdivision (vray_fogFadeOut) attribute to input meshes.
+
+    Valid node types: (mesh)
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+
+    :param vrayFogFadeOut: Set the fog fade out radius. If None it remains default/unchanged.
+    :type  vrayFogFadeOut: None or float
+    """
+
+    state = _convert_state(state)
+    validTypes = ("mesh")
+
+    if smartConvert or shapes is None:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No meshes found to apply the vray_fogFadeOut attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_fogFadeOut", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayFogFadeOut is not None:
+                mc.setAttr("{0}.vrayFogFadeOut".format(shape), vrayFogFadeOut)
+
+
+def vray_phoenix_object(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     vrayPhoenixObjVoxels=None):
+    """ Add/change the Phoenix Object Properties (vray_phoenix_object) attribute to input meshes.
+
+    Valid node types: (mesh)
+
+    V-ray version: Seen since 2.4+ nightly builds.
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+
+    :param vrayPhoenixObjVoxels: Set the phoenix object voxels. If None it remains default/unchanged.
+                                 Enum attribute:
+                                    0. Circumscribed,
+                                    1. Center,
+                                    2. Inscribed
+    :type  vrayPhoenixObjVoxels: None or int (0-2)
+    """
+
+    state = _convert_state(state)
+    validTypes = ("mesh")
+
+    if smartConvert or shapes is None:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No meshes found to apply the vray_phoenix_object attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_phoenix_object", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayPhoenixObjVoxels is not None:
+                mc.setAttr("{0}.vrayPhoenixObjVoxels".format(shape), vrayPhoenixObjVoxels)
 
 ##########
 # nurbsSurface
@@ -288,13 +686,19 @@ def vray_nurbsStaticGeom(shapes=None,
 def vray_nurbscurve_renderable(shapes=None,
                      state=1,
                      smartConvert=True,
-                     allDescendents=True):
+                     allDescendents=True,
+                     vrayNurbsCurveRenderable=None,
+                     vrayNurbsCurveMaterial=None,
+                     vrayNurbsCurveTesselation=None,
+                     vrayNurbsCurveStartWidth=None,
+                     vrayNurbsCurveLockEndWidth=None,
+                     vrayNurbsCurveEndWidth=None):
     """ Add/change the vray_nurbscurve_renderable attribute to input nurbsCurves.
 
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the vray_object_id attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param smartConvert: If True it will convert the input smartly to related shape nodes.
@@ -320,6 +724,24 @@ def vray_nurbscurve_renderable(shapes=None,
     for shape in shapes:
         mc.vray("addAttributesFromGroup", shape, "vray_nurbscurve_renderable", state)
 
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayNurbsCurveRenderable is not None:
+                mc.setAttr("{0}.vrayNurbsCurveRenderable".format(shape), vrayNurbsCurveRenderable)
+
+            # TODO: Test if this works, it's likely that this needs to have a connection instead of 'value'
+            if vrayNurbsCurveMaterial is not None:
+                mc.setAttr("{0}.vrayNurbsCurveMaterial".format(shape), vrayNurbsCurveMaterial)
+
+            if vrayNurbsCurveTesselation is not None:
+                mc.setAttr("{0}.vrayNurbsCurveTesselation".format(shape), vrayNurbsCurveTesselation)
+            if vrayNurbsCurveStartWidth is not None:
+                mc.setAttr("{0}.vrayNurbsCurveStartWidth".format(shape), vrayNurbsCurveStartWidth)
+            if vrayNurbsCurveLockEndWidth is not None:
+                mc.setAttr("{0}.vrayNurbsCurveLockEndWidth".format(shape), vrayNurbsCurveLockEndWidth)
+            if vrayNurbsCurveEndWidth is not None:
+                mc.setAttr("{0}.vrayNurbsCurveEndWidth".format(shape), vrayNurbsCurveEndWidth)
+
 
 ##############
 ## materials
@@ -334,7 +756,7 @@ def vray_material_id(materials=None,
     :param materials: Materials to apply the attribute to. If materials is None it will get
                       the materials related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param smartConvert: If True the input materials list will be checked for 'related materials'
@@ -373,7 +795,7 @@ def vray_specific_mtl(materials=None,
     :param materials: Materials to apply the attribute to. If materials is None it will get
                       the materials related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param smartConvert: If True the input materials list will be checked for 'related materials'
@@ -403,13 +825,14 @@ def vray_specific_mtl(materials=None,
 
 def vray_closed_volume(materials=None,
                      state=1,
-                     smartConvert=True):
+                     smartConvert=True,
+                     vrayClosedVolume=None):
     """ Add/change the v-ray closed volume shading attribute to input materials.
 
     :param materials: Materials to apply the attribute to. If materials is None it will get
                       the materials related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param smartConvert: If True the input materials list will be checked for 'related materials'
@@ -417,8 +840,10 @@ def vray_closed_volume(materials=None,
                          If no materials provided smartConvert is forced to True and it will get
                          materials related to the current selection.
     :type  smartConvert: bool
+
+    :param vrayClosedVolume: Enable/Disable Closed Volume Shading. If None it remains default/unchanged.
+    :type  vrayClosedVolume: bool
     """
-    # TODO: Add attribute value support
     # TODO: Add check if node is a valid v-ray material that can have closed volume shading
 
     state = _convert_state(state)
@@ -434,6 +859,11 @@ def vray_closed_volume(materials=None,
 
     for mat in materials:
         mc.vray("addAttributesFromGroup", mat, "vray_closed_volume", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayClosedVolume is not None:
+                mc.setAttr("{0}.{1}".format(mat, 'vrayClosedVolume'), vrayClosedVolume)
 
 
 ##############
@@ -451,7 +881,7 @@ def vray_cameraPhysical(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -493,7 +923,7 @@ def vray_cameraOverrides(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -550,7 +980,7 @@ def vray_cameraDome(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -587,7 +1017,7 @@ def vray_cameraDome(shapes=None,
 ##############
 ## lights
 ## These are seperated per light type like:
-## - pointLight (vray_pointLight)
+## - pointLight, spotLight (vray_pointLight)
 ## - directionalLight (vray_directlight)
 ## - ambientLight (vray_light)
 ## - areaLight (vray_arealight)
@@ -612,7 +1042,7 @@ def vray_light(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -675,7 +1105,7 @@ def vray_directlight(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -743,7 +1173,7 @@ def vray_pointLight(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -813,7 +1243,7 @@ def vray_arealight(shapes=None,
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
 
-    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :param state: If state is True it will add the attribute, else it will remove it.
     :type  state: 1 or 0
 
     :param allDescendents: If True it will smartConvert to allDescendent shapes.
@@ -827,13 +1257,13 @@ def vray_arealight(shapes=None,
     if smartConvert or shapes is None:
         shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
     else:
-        shapes = mc.ls(shapes, validTypes)
+        shapes = mc.ls(shapes, type=validTypes)
 
     if not shapes:
-        raise RuntimeError("No shapes found to apply the vray_pointLight attribute group changes to.")
+        raise RuntimeError("No shapes found to apply the vray_arealight attribute group changes to.")
 
     for shape in shapes:
-        mc.vray("addAttributesFromGroup", shape, "vray_pointLight", state)
+        mc.vray("addAttributesFromGroup", shape, "vray_arealight", state)
 
         # Manage the attributes (if not None change it to the set value)
         if state:
@@ -864,12 +1294,70 @@ def vray_arealight(shapes=None,
 ## file
 ##############
 #TODO: Add: Texture input Gamma (vray_file_gamma)
+# Input Gamma is allowed on: (File, VRayPTex, Substance nodes, imagePlane)
 #TODO: Add: Allow negative colors (vray_file_allow_neg_colors)
+# Allow negative colors is allowed on: (File, Substance nodes, imagePlane)
 #TODO: Add: Image file list (IFL) (vray_file_ifl)
+# Allow negative colors is allowed on: (File)
 #TODO: Add: Texture Filter (vray_texture_filter)
+# Allow negative colors is allowed on: (File, Substance)
 
 
 ###################
 ## place2dTexture
 ###################
 #TODO: Add: 2D Placement Options (vray_2d_placement_options)
+
+###################
+## samplerInfo
+###################
+#TODO: Add: Additional outputs (vray_samplerinfo_extra_tex)
+
+###################
+## transform
+###################
+
+def vray_skip_export(transforms=None,
+                     state=1,
+                     smartConvert=False,
+                     vraySkipExport=None):
+    """ Add/change the Skip Rendering (vray_skip_export) attribute to input transforms.
+
+    Valid node types: (transform)
+
+    :param transforms: transforms to apply the attribute to. If transforms is None it will get
+                       the transforms related to the current selection.
+
+    :param smartConvert: If True it will convert input shapes to parent transforms.
+                         Since this is likely unwanted behaviour smartConvert is False by default for this function.
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+    """
+    state = _convert_state(state)
+    validTypes = ("transform")
+
+    if transforms is None:
+        transforms = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # Include parent transform of a shape node
+        shapes = mc.ls(transforms, s=True, long=True)
+        if shapes:
+            shapeParents = mc.listRelatives(shapes, fullPath=True, parent=True)
+            if shapeParents:
+                transforms.extend(shapeParents)
+
+    transforms = mc.ls(transforms, type=validTypes, long=True)
+
+    if not transforms:
+        raise RuntimeError("No transforms found to apply the vray_skip_export attribute group changes to.")
+
+    for node in transforms:
+        mc.vray("addAttributesFromGroup", node, "vray_skip_export", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vraySkipExport is not None:
+                mc.setAttr("{0}.vraySkipExport".format(node), vraySkipExport)
