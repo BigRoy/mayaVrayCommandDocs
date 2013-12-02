@@ -34,7 +34,7 @@ def addVrayMaterialIds(materials=None):
     if materials:
         result = mc.promptDialog(title='Material ID value',
                                     message='Material ID:',
-                                    button=['Material', 'Cancel'],
+                                    button=['OK', 'Cancel'],
                                     defaultButton='OK',
                                     cancelButton='Cancel',
                                     dismissString='Cancel')

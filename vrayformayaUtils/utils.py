@@ -76,6 +76,11 @@ def getShapes(nodes=None,
 
     # Acquire from input nodes
     else:
+
+        # If an emtpy list (or anything that passes through as False) was passed in we return the empty list
+        if not nodes:
+            return []
+
         shapes = mc.ls(nodes, s=1, long=True)
 
         childrenShapes = mc.listRelatives(nodes,
