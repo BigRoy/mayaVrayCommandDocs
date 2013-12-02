@@ -136,7 +136,7 @@ def vray_object_id(shapes=None,
                   "VRayLightRectShape",
                   "VRayLightSphereShape")
     shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
-                                   filterType=validTypes, allowTransform=False)
+                                   filterType=validTypes, allowTransform=allowTransform)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_object_id attribute group changes to.")
@@ -188,7 +188,7 @@ def vray_user_attributes(shapes=None,
 
     validTypes = ("mesh", "nurbsSurface")
     shapes = _convert_input_shapes(shapes=shapes, smartConvert=smartConvert, allDescendents=allDescendents,
-                                   filterType=validTypes, allowTransform=False)
+                                   filterType=validTypes, allowTransform=allowTransform)
 
     if not shapes:
         raise RuntimeError("No shapes found to apply the vray_user_attributes attribute group changes to.")

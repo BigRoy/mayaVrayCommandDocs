@@ -66,13 +66,16 @@ def getShapes(nodes=None,
             sel = mc.ls(sl=1)
             shapes = mc.ls(sl=1, s=1, long=True)
 
-            childrenShapes = mc.listRelatives(sel,
+            # Note that we can't directly get allDescendents and filter to shapes through listRelatives because it will
+            # still stop at the first level because it will not pass through other nodes than shapes. :/
+            children = mc.listRelatives(sel,
                                        children=True,
-                                       shapes=True,
                                        fullPath=True,
                                        allDescendents=allDescendents)
-            if childrenShapes:
-                shapes.extend(childrenShapes)
+            if children:
+                childrenShapes = mc.ls(children, s=True, long=True)
+                if childrenShapes:
+                    shapes.extend(childrenShapes)
 
     # Acquire from input nodes
     else:
@@ -83,13 +86,14 @@ def getShapes(nodes=None,
 
         shapes = mc.ls(nodes, s=1, long=True)
 
-        childrenShapes = mc.listRelatives(nodes,
+        children = mc.listRelatives(nodes,
                                        children=True,
-                                       shapes=True,
                                        fullPath=True,
                                        allDescendents=allDescendents)
-        if childrenShapes:
-            shapes.extend(childrenShapes)
+        if children:
+            childrenShapes = mc.ls(children, s=True, long=True)
+            if childrenShapes:
+                shapes.extend(childrenShapes)
 
     # Return nothing if we have nothing
     if not shapes:
