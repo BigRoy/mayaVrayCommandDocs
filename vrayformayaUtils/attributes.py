@@ -439,7 +439,150 @@ def vray_closed_volume(materials=None,
 ##############
 ## camera
 ##############
-# TODO: Add camera attributes: vray_cameraDome, vray_cameraOverrides, vray_cameraPhysical
+
+def vray_cameraPhysical(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True):
+    """ Add/change the vray_cameraPhysical attribute to selected meshes
+
+    Valid node types: (camera)
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+    """
+
+    state = _convert_state(state)
+    validTypes = ("camera")
+
+    if smartConvert or shapes is None:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No cameras found to apply the vray_cameraPhysical attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_cameraPhysical", state)
+
+
+def vray_cameraOverrides(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     vrayCameraOverridesOn=None,
+                     vrayCameraType=None,
+                     vrayCameraOverrideFOV=None,
+                     vrayCameraFOV=None,
+                     vrayCameraHeight=None,
+                     vrayCameraAutoFit=None,
+                     vrayCameraDist=None,
+                     vrayCameraCurve=None):
+    """ Add/change the vray_cameraOverrides attribute to selected meshes
+
+    Valid node types: (camera)
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+    """
+
+    state = _convert_state(state)
+    validTypes = ("camera")
+
+    if smartConvert or shapes is None:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No cameras found to apply the vray_cameraOverrides attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_cameraOverrides", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayCameraOverridesOn is not None:
+                mc.setAttr("{0}.vrayCameraOverridesOn".format(shape), vrayCameraOverridesOn)
+            if vrayCameraType is not None:
+                mc.setAttr("{0}.vrayCameraType".format(shape), vrayCameraType)
+            if vrayCameraOverrideFOV is not None:
+                mc.setAttr("{0}.vrayCameraOverrideFOV".format(shape), vrayCameraOverrideFOV)
+            if vrayCameraFOV is not None:
+                mc.setAttr("{0}.vrayCameraFOV".format(shape), vrayCameraFOV)
+            if vrayCameraHeight is not None:
+                mc.setAttr("{0}.vrayCameraHeight".format(shape), vrayCameraHeight)
+            if vrayCameraAutoFit is not None:
+                mc.setAttr("{0}.vrayCameraAutoFit".format(shape), vrayCameraAutoFit)
+            if vrayCameraDist is not None:
+                mc.setAttr("{0}.vrayCameraDist".format(shape), vrayCameraDist)
+            if vrayCameraCurve is not None:
+                mc.setAttr("{0}.vrayCameraCurve".format(shape), vrayCameraCurve)
+
+
+def vray_cameraDome(shapes=None,
+                     state=1,
+                     smartConvert=True,
+                     allDescendents=True,
+                     vrayCameraDomeOn=None,
+                     vrayCameraDomeFlipX=None,
+                     vrayCameraDomeFlipY=None,
+                     vrayCameraDomeFov=None):
+    """ Add/change the vray_cameraDome attribute to selected meshes
+
+    Valid node types: (camera)
+
+    :param shapes: Shapes to apply the attribute to. If shapes is None it will get
+                   the shapes related to the current selection.
+
+    :param state: If state is True it will add the subdivision attribute, else it will remove it.
+    :type  state: 1 or 0
+
+    :param allDescendents: If True it will smartConvert to allDescendent shapes.
+                           e.g. this allows you to apply it to a group and all shapes in it will get object ids.
+    :type  allDescendents: bool
+    """
+
+    state = _convert_state(state)
+    validTypes = ("camera")
+
+    if smartConvert or shapes is None:
+        shapes = getShapes(shapes, allDescendents=allDescendents, filterType=validTypes)
+    else:
+        shapes = mc.ls(shapes, validTypes)
+
+    if not shapes:
+        raise RuntimeError("No cameras found to apply the vray_cameraDome attribute group changes to.")
+
+    for shape in shapes:
+        mc.vray("addAttributesFromGroup", shape, "vray_cameraDome", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayCameraDomeOn is not None:
+                mc.setAttr("{0}.vrayCameraDomeOn".format(shape), vrayCameraDomeOn)
+            if vrayCameraDomeFlipX is not None:
+                mc.setAttr("{0}.vrayCameraDomeFlipX".format(shape), vrayCameraDomeFlipX)
+            if vrayCameraDomeFlipY is not None:
+                mc.setAttr("{0}.vrayCameraDomeFlipY".format(shape), vrayCameraDomeFlipY)
+            if vrayCameraDomeFov is not None:
+                mc.setAttr("{0}.vrayCameraDomeFov".format(shape), vrayCameraDomeFov)
+
 
 ##############
 ## lights
@@ -716,3 +859,17 @@ def vray_arealight(shapes=None,
                 mc.setAttr("{0}.vrayOverrideMBSamples".format(shape), vrayOverrideMBSamples)
             if vrayMBSamples is not None:
                 mc.setAttr("{0}.vrayOverrideMBSamples".format(shape), vrayMBSamples)
+
+##############
+## file
+##############
+#TODO: Add: Texture input Gamma (vray_file_gamma)
+#TODO: Add: Allow negative colors (vray_file_allow_neg_colors)
+#TODO: Add: Image file list (IFL) (vray_file_ifl)
+#TODO: Add: Texture Filter (vray_texture_filter)
+
+
+###################
+## place2dTexture
+###################
+#TODO: Add: 2D Placement Options (vray_2d_placement_options)
