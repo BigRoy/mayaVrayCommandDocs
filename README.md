@@ -9,8 +9,13 @@ We're trying to build up documentation for V-ray for Maya's code base.
 
 First focusing on all the built-in commands that come with a V-ray for Maya installation, like the extremely bad documented `vray` command.
 
+This documentation can be found in this repository's Wiki (see link above).
+
 
 ###vrayForMayaUtils vs snippets
+
+Besides writing out documentation for scripting with V-ray for Maya we're also sharing code snippets and building a
+consistent framework for managing V-ray data in your scene, like *v-ray object properties* and *v-ray attributes*.
 
 
 #####vrayForMayaUtils
