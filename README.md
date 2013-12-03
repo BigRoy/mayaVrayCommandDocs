@@ -21,6 +21,8 @@ Getting to a higher level of automatisation is closely related to understanding 
 
 ###vrayForMayaUtils vs snippets
 
+#####vrayForMayaUtils
+
 The `vrayForMayaUtils` package contains functionality that allows TD's/Programmers to interact with V-ray in an
 easier way. Currently this only helps managing v-ray attributes. Though we're working on building a _consistent
 framework_.
@@ -38,6 +40,8 @@ A couple of focuses for vrayformayaUtils are:
 - Possibly object oriented where suitable
 
 - Fast and easy to use
+
+#####snippets
 
 On the other hand there are the `snippets`. You could consider that the quick stop for finding your script to deal with
 a certain repetitive tasks. This is where you should go if you want to get started quickly.
