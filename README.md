@@ -21,16 +21,23 @@ Getting to a higher level of automatisation is closely related to understanding 
 
 ###vrayForMayaUtils vs snippets
 
-The `vrayForMayaUtils` package will contain functionality that allows TD's/Programmers to interact with V-ray in an
-easier way. Currently this is just a dummy folder. Though we're working on building a _consistent framework_.
+The `vrayForMayaUtils` package contains functionality that allows TD's/Programmers to interact with V-ray in an
+easier way. Currently this is only helps managing v-ray attributes. Though we're working on building a _consistent
+framework_.
 
-A couple of focuses here are:
+On the to-do list is building a framework around objectProperties and then we should have covered the two
+main areas that benefit from automatisation. There might be a focus in the feature to do some (PySide?) GUI elements
+that aid in the vray for maya workflow.
+
+A couple of focuses for vrayformayaUtils are:
 
 - Autocomplete for functions
 
 - Consistent framework
 
 - Possibly object oriented where suitable
+
+- Fast and easy to use
 
 On the other hand there are the `snippets`. You could consider that the quick stop for finding your script to deal with
 a certain repetitive tasks. This is where you should go if you want to get started quickly.
