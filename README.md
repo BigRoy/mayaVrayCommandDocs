@@ -22,7 +22,7 @@ consistent framework for managing V-ray data in your scene, like *v-ray object p
 
 The `vrayForMayaUtils` package contains functionality that allows TD's/Programmers to interact with V-ray in an
 easier way. Currently this only helps managing v-ray attributes. Though we're working on building a _consistent
-framework_ to ease managing V-ray data in Maya scenes.
+framework_ to ease managing any type of V-ray data in Maya scenes.
 
 On the to-do list is adding a framework around objectProperties and then we should have covered the two
 main areas that benefit from automatisation. There might be a focus in the feature to do some (PySide?) GUI elements
