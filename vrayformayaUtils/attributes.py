@@ -720,7 +720,7 @@ def vray_nurbscurve_renderable(shapes=None,
                            e.g. this allows you to apply it to a group and all shapes in it will get object ids.
     :type  allDescendents: bool
     """
-    # TODO: Add change attribute value support
+    # TODO: Add change attribute parameter docstring
 
     state = _convert_state(state)
     validTypes = ("nurbsCurve")
@@ -1308,14 +1308,214 @@ def vray_arealight(shapes=None,
 ##############
 ## file
 ##############
-#TODO: Add: Texture input Gamma (vray_file_gamma)
-# Input Gamma is allowed on: (File, VRayPTex, Substance nodes, imagePlane)
-#TODO: Add: Allow negative colors (vray_file_allow_neg_colors)
-# Allow negative colors is allowed on: (File, Substance nodes, imagePlane)
-#TODO: Add: Image file list (IFL) (vray_file_ifl)
-# Allow negative colors is allowed on: (File)
-#TODO: Add: Texture Filter (vray_texture_filter)
-# Allow negative colors is allowed on: (File, Substance)
+
+def vray_file_gamma(nodes=None,
+                     state=1,
+                     smartConvert=True,
+                     vrayFileGammaEnable=None,
+                     vrayFileColorSpace=None,
+                     vrayFileGammaValue=None):
+    """ Add/change the Texture input Gamma (vray_file_gamma) attribute to input nodes.
+
+    Valid node types: (file, VRayPTex, Substance nodes, imagePlane)
+
+    :param nodes: nodes to apply the attribute to. If nodes is None it will get
+                  the nodes related to the current selection.
+
+    :param smartConvert: CURRENTLY NO IMPLEMENTATION
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+    """
+    # TODO: Implement attribute parameters description
+
+    state = _convert_state(state)
+    validTypes = ("file", "VRayPtex", "substance", "imagePlane")
+
+    if nodes is None:
+        nodes = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # TODO: Implement smart convert
+        pass
+
+    nodes = mc.ls(nodes, type=validTypes, long=True)
+
+    if not nodes:
+        raise RuntimeError("No samplerInfo found to apply the vray_file_gamma attribute changes to.")
+
+    for node in nodes:
+        mc.vray("addAttributesFromGroup", node, "vray_file_gamma", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayFileGammaEnable is not None:
+                mc.setAttr("{0}.vrayFileGammaEnable".format(node), vrayFileGammaEnable)
+            if vrayFileColorSpace is not None:
+                mc.setAttr("{0}.vrayFileColorSpace".format(node), vrayFileColorSpace)
+            if vrayFileGammaValue is not None:
+                mc.setAttr("{0}.vrayFileGammaValue".format(node), vrayFileGammaValue)
+
+
+def vray_file_allow_neg_colors(nodes=None,
+                     state=1,
+                     smartConvert=True,
+                     vrayFileAllowNegColors=None):
+    """ Add/change the Texture input Gamma (vray_file_allow_neg_colors) attribute to input nodes.
+
+    Valid node types: (file, Substance nodes, imagePlane)
+
+    :param nodes: nodes to apply the attribute to. If nodes is None it will get
+                  the nodes related to the current selection.
+
+    :param smartConvert: CURRENTLY NO IMPLEMENTATION
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+    """
+    # TODO: Implement attribute parameters description
+
+    state = _convert_state(state)
+    validTypes = ("file", "substance", "imagePlane")
+
+    if nodes is None:
+        nodes = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # TODO: Implement smart convert
+        pass
+
+    nodes = mc.ls(nodes, type=validTypes, long=True)
+
+    if not nodes:
+        raise RuntimeError("No samplerInfo found to apply the vray_samplerinfo_extra_tex attribute changes to.")
+
+    for node in nodes:
+        mc.vray("addAttributesFromGroup", node, "vray_file_allow_neg_colors", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayFileAllowNegColors is not None:
+                mc.setAttr("{0}.vrayFileAllowNegColors".format(node), vrayFileAllowNegColors)
+
+
+def vray_file_ifl(nodes=None,
+                     state=1,
+                     smartConvert=True,
+                     vrayFileIFLStartFrame=None,
+                     vrayFileIFLEndCondition=None,
+                     vrayFileIFLPlaybackRate=None):
+    """ Add/change the Texture input Gamma (vray_file_ifl) attribute to input nodes.
+
+    Valid node types: (file, VRayPTex, Substance nodes, imagePlane)
+
+    :param nodes: nodes to apply the attribute to. If nodes is None it will get
+                  the nodes related to the current selection.
+
+    :param smartConvert: CURRENTLY NO IMPLEMENTATION
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+    """
+    # TODO: Implement attribute parameters description
+
+    state = _convert_state(state)
+    validTypes = ("file")
+
+    if nodes is None:
+        nodes = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # TODO: Implement smart convert
+        pass
+
+    nodes = mc.ls(nodes, type=validTypes, long=True)
+
+    if not nodes:
+        raise RuntimeError("No samplerInfo found to apply the vray_file_ifl attribute changes to.")
+
+    for node in nodes:
+        mc.vray("addAttributesFromGroup", node, "vray_file_ifl", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayFileIFLStartFrame is not None:
+                mc.setAttr("{0}.vrayFileIFLStartFrame".format(node), vrayFileIFLStartFrame)
+            if vrayFileIFLEndCondition is not None:
+                mc.setAttr("{0}.vrayFileIFLEndCondition".format(node), vrayFileIFLEndCondition)
+            if vrayFileIFLPlaybackRate is not None:
+                mc.setAttr("{0}.vrayFileIFLPlaybackRate".format(node), vrayFileIFLPlaybackRate)
+
+
+def vray_texture_filter(nodes=None,
+                     state=1,
+                     smartConvert=True,
+                     vrayOverrideTextureFilter=None,
+                     vrayTextureFilter=None,
+                     vrayTextureSmoothType=None):
+    """ Add/change the Texture input Gamma (vray_file_gamma) attribute to input nodes.
+
+    Valid node types: (file, VRayPTex, Substance nodes, imagePlane)
+
+    :param nodes: nodes to apply the attribute to. If nodes is None it will get
+                  the nodes related to the current selection.
+
+    :param smartConvert: CURRENTLY NO IMPLEMENTATION
+    :type  smartConvert: bool
+
+    :param state: If state is True it will add the attribute, else it will remove it.
+    :type  state: 1 or 0
+
+
+    :param vrayOverrideTextureFilter: Enable/disable the override texture filter.
+    :type  vrayOverrideTextureFilter: None or bool
+
+    :param vrayTextureFilter: Set the method of preserve map borders.
+                                   Enum attribute:
+                                      -1. Nearest
+                                       0. Smooth,
+                                       1. Smooth with mipmaps,
+                                       2. SAT
+    :type  vrayTextureFilter: None or int (-1 to 2)
+
+    :param vrayTextureSmoothType: Set the method of preserve map borders.
+                                   Enum attribute:
+                                       0. Bilinear,
+                                       1. Bucubic,
+                                       2. Biquadratic
+    :type  vrayTextureSmoothType: None or int (0-2)
+    """
+
+    state = _convert_state(state)
+    validTypes = ("file", "substance")
+
+    if nodes is None:
+        nodes = mc.ls(sl=1, long=True)
+
+    if smartConvert:
+        # TODO: Implement smart convert
+        pass
+
+    nodes = mc.ls(nodes, type=validTypes, long=True)
+
+    if not nodes:
+        raise RuntimeError("No samplerInfo found to apply the vray_texture_filter attribute changes to.")
+
+    for node in nodes:
+        mc.vray("addAttributesFromGroup", node, "vray_texture_filter", state)
+
+        # Manage the attributes (if not None change it to the set value)
+        if state:
+            if vrayOverrideTextureFilter is not None:
+                mc.setAttr("{0}.vrayOverrideTextureFilter".format(node), vrayOverrideTextureFilter)
+            if vrayTextureFilter is not None:
+                mc.setAttr("{0}.vrayTextureFilter".format(node), vrayTextureFilter)
+            if vrayTextureSmoothType is not None:
+                mc.setAttr("{0}.vrayTextureSmoothType".format(node), vrayTextureSmoothType)
+
 
 
 ###################
