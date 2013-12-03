@@ -11,3 +11,4 @@
 
 # Making it easily accessible by just importing the full package.
 import attributes
+from core import *
