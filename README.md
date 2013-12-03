@@ -22,10 +22,10 @@ Getting to a higher level of automatisation is closely related to understanding 
 ###vrayForMayaUtils vs snippets
 
 The `vrayForMayaUtils` package contains functionality that allows TD's/Programmers to interact with V-ray in an
-easier way. Currently this is only helps managing v-ray attributes. Though we're working on building a _consistent
+easier way. Currently this only helps managing v-ray attributes. Though we're working on building a _consistent
 framework_.
 
-On the to-do list is building a framework around objectProperties and then we should have covered the two
+On the to-do list is adding a framework around objectProperties and then we should have covered the two
 main areas that benefit from automatisation. There might be a focus in the feature to do some (PySide?) GUI elements
 that aid in the vray for maya workflow.
 
