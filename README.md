@@ -10,15 +10,6 @@ We're trying to build up documentation for V-ray for Maya's code base.
 First focusing on all the built-in commands that come with a V-ray for Maya installation, like the extremely bad documented `vray` command.
 
 
-###Example Code
-
-I'll add some more example functions in the repository over time.
-
-With this we hope to share some of the knowledge that we've gained from using V-ray over time and the increasing need we had to improve the efficiency of our workflow. 
-
-Getting to a higher level of automatisation is closely related to understanding how to script your way through the basics. We are trying to help out on that part by sharing small code snippets focused on getting tasks done. By making this open-source we also hope to learn a lot from others and their ideas on the V-ray for Maya workflow.
-
-
 ###vrayForMayaUtils vs snippets
 
 #####vrayForMayaUtils
@@ -48,6 +39,13 @@ a certain repetitive tasks. This is where you should go if you want to get start
 
 Also read the README_FOR_DUMMIES.md for more information.
 
+I'll add some more example functions in the repository over time.
+
+With this we hope to share some of the knowledge that we've gained from using V-ray over time and the increasing need we had to improve the efficiency of our workflow.
+
+Getting to a higher level of automatisation is closely related to understanding how to script your way through the basics. We are trying to help out on that part by sharing small code snippets focused on getting tasks done. By making this open-source we also hope to learn a lot from others and their ideas on the V-ray for Maya workflow.
+
+*In the snippets section you can find some very useful code to help with fixing the v-ray for maya framebuffer bug.*
 
 ###Help the Vray for Maya community
 
