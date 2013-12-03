@@ -490,6 +490,7 @@ def vray_displacement(shapes=None,
             if vrayDisplacementMaxValue is not None:
                 mc.setAttr("{0}.vrayDisplacementMaxValue".format(shape), vrayDisplacementMaxValue)
 
+
 def vray_roundedges(shapes=None,
                      state=1,
                      smartConvert=True,
@@ -498,7 +499,7 @@ def vray_roundedges(shapes=None,
                      vrayRoundEdgesRadius=None):
     """ Add/change the Round Edges (vray_roundedges) attribute to input meshes.
 
-    Valid node types: (mesh)
+    Valid node types: (mesh, shadingEngine)
 
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
@@ -516,6 +517,7 @@ def vray_roundedges(shapes=None,
     :param vrayRoundEdgesRadius: Set the round edges radius. If None it remains default/unchanged.
     :type  vrayRoundEdgesRadius: None or float
     """
+    # TODO: Support mode to apply vray_roundedges on shadingEngine instead of material
 
     state = _convert_state(state)
 
@@ -637,6 +639,8 @@ def vray_nurbsStaticGeom(shapes=None,
                      vrayFlatnessCoef=None):
     """ Add/change the NURBS attributes to input shapes.
 
+    Valid node types: (nurbsSurface)
+
     Note: The actual v-ray command for this has a typo: vray_nusrbsStaticGeom
           I've submitted this as an error/bug, it's up to Chaosgroup what they'll do with it.
 
@@ -686,7 +690,7 @@ def vray_nurbsStaticGeom(shapes=None,
 
 
 ##############
-## nurbsCurves
+## nurbsCurve
 ##############
 
 def vray_nurbscurve_renderable(shapes=None,
@@ -700,6 +704,8 @@ def vray_nurbscurve_renderable(shapes=None,
                      vrayNurbsCurveLockEndWidth=None,
                      vrayNurbsCurveEndWidth=None):
     """ Add/change the vray_nurbscurve_renderable attribute to input nurbsCurves.
+
+    Valid node types: (nurbsCurve)
 
     :param shapes: Shapes to apply the attribute to. If shapes is None it will get
                    the shapes related to the current selection.
@@ -757,6 +763,8 @@ def vray_material_id(materials=None,
                      vrayMaterialId=None):
     """ Add/change the v-ray material ID attribute to input materials.
 
+    Valid node types: (material, shadingEngine)
+
     :param materials: Materials to apply the attribute to. If materials is None it will get
                       the materials related to the current selection.
 
@@ -772,6 +780,8 @@ def vray_material_id(materials=None,
     :param vrayMaterialId: The material ID number value. If None it will remain default/unchanged.
     :type  vrayMaterialId: None or int
     """
+    # TODO: Support mode to apply material ID on shadingEngine instead of material
+
     state = _convert_state(state)
 
     if materials is None:
@@ -799,6 +809,8 @@ def vray_specific_mtl(materials=None,
                      smartConvert=True):
     """ Add/change the v-ray material override attribute to input materials.
 
+    Valid node types: (material, shadingEngine)
+
     :param materials: Materials to apply the attribute to. If materials is None it will get
                       the materials related to the current selection.
 
@@ -811,6 +823,7 @@ def vray_specific_mtl(materials=None,
                          materials related to the current selection.
     :type  smartConvert: bool
     """
+    # TODO: Support mode to apply vray_specific_mtl on shadingEngine instead of material
     # TODO: Add change attribute value support
     state = _convert_state(state)
 
@@ -838,6 +851,8 @@ def vray_closed_volume(materials=None,
                      smartConvert=True,
                      vrayClosedVolume=None):
     """ Add/change the v-ray closed volume shading attribute to input materials.
+
+    Valid node types: (v-ray material)
 
     :param materials: Materials to apply the attribute to. If materials is None it will get
                       the materials related to the current selection.
