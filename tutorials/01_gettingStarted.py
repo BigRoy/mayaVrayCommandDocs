@@ -3,7 +3,7 @@
     This **gettingStarted** tutorial should allow  you to get up on your feet quickly to work with Chaosgroup's ``vray``
     command in Maya with Python.
 
-    For a better readable document check the accompanying 01_gettingStarted.md file on the GitHub repository.
+    For a very short overview of the tutorials have a look at the README that resides in the tutorials directory.
 
 """
 
