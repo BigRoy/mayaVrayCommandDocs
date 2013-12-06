@@ -46,7 +46,8 @@ for shape in shapes:
 
 # So what does that do?
 # First it gets all shapes from the current selection.
-# Then we loop over all of these shapes,# To add a ``vray_subdivision`` attribute to every single on of them.
+# Then we loop over all of these shapes,
+# To add a ``vray_subdivision`` attribute to every single on of them.
 # EASY!
 #
 # So the command to add the attributes is basically in the format of:
@@ -54,9 +55,9 @@ for shape in shapes:
 # mc.vray("addAttributesFromGroup", node, attr, state)
 #
 # Where:
-# node is the node to apply the command to. (this should be of the correct type)
-# attr is the attribute type/group to create. (see below for some variations)
-# state is a an integer (1 or 0) to either create or remove the attributes. (note: True or False don't work correctly!)
+#    `node` is the node to apply the command to. (this should be of the correct type)
+#    `attr` is the attribute type/group to create. (some variations can be found in the wiki documentation)
+#    `state` is an integer (1 or 0) to either create or remove the attributes. (note: True or False don't work correctly!)
 #
 # Now let's remove it again by changing the state parameter.
 
