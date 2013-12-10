@@ -33,8 +33,8 @@
 #    The command reference shows a list of all built-in maya commands. They come with a brief explanation and with
 #    some examples as well. Useful! :)
 
-# One important command is mc.ls()
-# It's essentially a ``list`` command and returns a list of node names. Either from selection, or by name or type.
+# One important command is ``mc.ls()``
+# It's essentially a **list** command and returns a list of node names. Either from selection, or by name or type, etc.
 
 # To get the current selection:
 import maya.cmds as mc
@@ -61,7 +61,7 @@ print mc.ls(sl=True, type="mesh")
 
 # That's because you're essentially selecting the transform node of the object. The transform node is that thing that
 # tells maya where it is positioned in the scene. You see this behaviour for all shape nodes, they are parented under
-# a transform node. For example a camera is under a transform, or a nurbsSurface, or nurbsCurve.
+# a transform node. For example a camera is under a transform. It's the same for a nurbsSurface, or nurbsCurve, etc.
 
 # This is a KEY thing to remember: The shape node is seperate from the transform. It's literally it's child.
 
@@ -72,8 +72,8 @@ print mc.ls(sl=True, type="mesh")
 # The shape will be gone, but the transform will still be there. Look at the icon of the node of the transform that is
 # still there in the outliner. Looks familiar? It should, because it's exactly the icon of a group (NULL).
 
-# To get the shape from your selected transforms you need to exactly that: Go one down in the hierarchy. Or we could
-# say: Get its children.
+# To get the shape from your selected transforms you need to do exactly that: Go one down in the hierarchy. Or we could
+# say: Get its children. In Maya we did that by using ``listRelatives``.
 
 import maya.cmds as mc
 selection = mc.ls(sl=1)
@@ -97,8 +97,8 @@ import maya.cmds as mc
 selection = mc.ls(sl=1)
 print selection
 if selection:
-    meshes = mc.listRelatives(selection, children=True, shapes=True)
-    print meshes
+    shapes = mc.listRelatives(selection, children=True, shapes=True)
+    print shapes
 
 # More information about the ls command and listRelatives command can be found in the Python command reference.
 # See point 3 at the start of this tutorial for more information about the Python command reference.
@@ -133,14 +133,14 @@ print nodes
 # Then go on and get the children nurbsCurve shape nodes.
 
 if nodes:
-    shapes = mc.listRelatives(nodes, children=True, shapes=True, type="nurbsCurve")
-    print shapes
+    nurbsCurves = mc.listRelatives(nodes, children=True, shapes=True, type="nurbsCurve")
+    print nurbsCurves
 
     # Still looking good?
     # All we need to do now is add the ``vray_nurbscurve_renderable`` attribute.
     # It's very similar to what we did so far. Easy!
 
-    for shape in shapes:
+    for shape in nurbsCurves:
         mc.vray("addAttributesFromGroup", "vray_nurbscurve_renderable", shape, 1)
 
 # Simple as that!
