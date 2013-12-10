@@ -1,5 +1,6 @@
 import maya.cmds as mc
 
+
 def autoRenderViewMinimize(state=None, renderView="renderViewWindow"):
     """ Overrides the renderView's restore command so that it directly minimizes again.
 
@@ -8,7 +9,18 @@ def autoRenderViewMinimize(state=None, renderView="renderViewWindow"):
     Enabling this autoRenderViewMinimize will directly minimize the render view window when the render starts.
 
     Default value for state is None. This means the value will depend on user input during the execution of the script.
-    If the user holds any of the following keys the autoRenderViewMinimize will be disabled: Shift, Alt, Control
+    If the user holds any of the following keys the autoRenderViewMinimize will be disabled: Shift, Alt, Control.
+    This makes it an easy to use shelf button script. :)
+
+    Note: You should leave the render view window open, but minimized. Because Maya's render view code has been hard
+          coded this to re-open and resize this is really the only viable way to hide it without breaking stuff.
+          Until chaosgroup overrides the functionality - eg. hiding the render view when their renderer (or
+          framebufffer) kicks in - this is a neat solution.
+
+    Note: Another way might be to dock the renderView window to your interface and hide it. This way it will not pop up.
+          But because Maya (auto-)resizes the top window if the view is too small when pressing the render button in the
+          UI it will resize Maya's main window (because that is then the top window.)
+          A reference to this method can be found here: http://polygonspixelsandpaint.tumblr.com/post/68136553566
 
     :param state: The state to set the autoRenderViewMinimize to.
 
@@ -33,9 +45,10 @@ def autoRenderViewMinimize(state=None, renderView="renderViewWindow"):
     """
 
     if state is None:
-        # If no state is provided we do an automatic version that allows user
+        # If state is None we allow the user to set the state by whether they have pressed a modifier button during execution.
         # If any modifier key is pressed when the script is running then the RenderView minimize override is disabled. (force removed)
-        # So to disable the functionality run this script while holding: Shift, Alt and/or Control.
+        # So to disable the functionality run this script while holding: Shift, Alt and/or Control. Else it will enable
+        # the functionality.
         state = not (mc.getModifiers())
     print "Setting the override render view minimize to: {0}".format(state)
 
@@ -52,6 +65,7 @@ def autoRenderViewMinimize(state=None, renderView="renderViewWindow"):
            mc.RenderViewWindow()
 
     return state
+
 
 if __name__ == "__main__":
     autoRenderViewMinimize()
