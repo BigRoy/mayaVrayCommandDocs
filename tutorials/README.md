@@ -10,8 +10,18 @@ as complementary information when working through some functions. For example wh
 
 01. Getting Started
 -------------------
+
 This will very quickly introduce you on how to import maya commands into Python and call the mc.vray() command.
 Then we hop into adding the `vray_subdivision` attribute to mesh nodes.
+
+
+02. Deeper into V-ray Attributes
+--------------------------------
+
+This chapter will go a tiny bit deeper (but still very basic level) into adding v-ray attributes to only the nodes you
+want it to. We will get children shapes from transform and apply the `vray_subdivision` and `vray_nurbscurve_renderable`
+attributes. At the end you should have a good grasp on adding any v-ray attribute you need to exactly the object you
+want in your maya scene.
 
 
 Have some ideas?
