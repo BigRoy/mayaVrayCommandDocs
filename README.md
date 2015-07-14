@@ -1,7 +1,18 @@
 mayaVrayCommandDocs
 ===================
 
-Documentation & Code Snippets for Maya's v-ray commands
+Documentation & Code Snippets for Maya's V-Ray commands.
+
+This was originally designed to be a place to find commonly used functions from the V-Ray for Maya plug-in along with documentation about their usage and functionality. With V-Ray 3.0 for Maya being released alongside its documentation many of the features are currently clearly documentation in Chaosgroup's [official documentation for V-Ray 3.0](http://docs.chaosgroup.com/display/VRAY3MAYA/V-Ray+3.0+for+Maya+Help+Home).
+
+Unfortunately functionality of the commands available to you in Maya are still hard to find in the documentation (if even documented). This means there's still plenty here to find that could be a treasure of information to many. I hope to update it soon with some of the new commands featured in V-Ray 3.0+.
+
+With V-Ray 3.0 the commands in Maya also can present you with information, for example try running (Python):
+```python
+import maya.cmds as mc
+mc.vray()
+```
+
 
 ###See the [Maya V-ray Commands Wiki](https://github.com/BigRoy/mayaVrayCommandDocs/wiki) for documentation.
 
@@ -22,8 +33,7 @@ library/framework we've decided to seperate it into its own repository.
 
 ###Snippets
 
-On the other hand there are the `snippets`. You could consider that the quick stop for finding your script to deal with
-a certain repetitive tasks. This is where you should go if you want to get started quickly.
+On the other hand there are the `snippets`. You could consider that the quick stop for finding your script to deal witha certain repetitive tasks. This is where you should go if you want to get started quickly.
 
 I'll add some more example functions in the repository over time.
 With this we hope to share some of the knowledge that we've gained from using V-ray over time and the increasing need we had to improve the efficiency of our workflow.
